@@ -76,14 +76,15 @@ ORDER BY percent_population_infected DESC -- , highest_infection_count, `date`
 
 -- Percentage of Population Vaccinated as of recent date
 SELECT cd.continent, cd.location, cd.population, MAX(cv.people_vaccinated) as people_vaccinated
-, MAX(cv.people_vaccinated/cd.population) AS vaccination_percentage
+, COALESCE(MAX(cv.people_vaccinated/cd.population), 0) AS vaccination_percentage
 FROM PortfolioProject.CovidDeaths cd 
 JOIN PortfolioProject.CovidVaccinations cv
 	ON cd.location = cv.location 
 	AND cd.`date` = cv.`date` 
 WHERE cd.continent != ''
+-- AND cd.location LIKE 'Northern%'
 GROUP BY cd.continent, cd.location, cd.population
--- AND cd.location LIKE 'Seychelles'
+
 
 
 -- 2.
