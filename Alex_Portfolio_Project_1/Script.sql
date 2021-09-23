@@ -3,6 +3,7 @@ use PortfolioProject;
 
 SELECT  *
 FROM PortfolioProject.CovidDeaths cd
+WHERE location LIKE 'Northern Cyprus'
 ORDER BY 3,4;
 
 SELECT  *
@@ -116,7 +117,7 @@ JOIN PortfolioProject.CovidVaccinations cv
 	ON cd.location = cv.location 
 	AND cd.`date` = cv.`date` 
 WHERE cd.continent != ''
--- AND cd.location LIKE 'Seychelles'
+AND cd.location LIKE 'Seychelles'
 
 -- Accounting for people_vaccinated being 0 if there is no change
 SELECT cd.continent, cd.location, cd.`date`, cd.population, NULLIF(cv.people_vaccinated, 0) as people_vaccinated
