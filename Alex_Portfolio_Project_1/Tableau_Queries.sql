@@ -39,7 +39,7 @@ ORDER BY total_death_count DESC
 -- 3.
 
 -- Looking at each Country's Infection Rate compared to Population
--- As of most recent date, in descending order
+-- As of recent date, in descending order
 SELECT location, population, MAX(total_cases) AS highest_infection_count
 , COALESCE(MAX(total_cases/population), 0 ) AS percent_population_infected
 FROM PortfolioProject.CovidDeaths cd 
@@ -69,12 +69,24 @@ ORDER BY percent_population_infected DESC -- , highest_infection_count, `date`
 
 
 
-
-
 -- Queries I would like to add into Tableau at a later time
 
 
 -- 1.
+
+-- Percentage of Population Vaccinated as of recent date
+SELECT cd.continent, cd.location, cd.population, MAX(cv.people_vaccinated) as people_vaccinated
+, MAX(cv.people_vaccinated/cd.population) AS vaccination_percentage
+FROM PortfolioProject.CovidDeaths cd 
+JOIN PortfolioProject.CovidVaccinations cv
+	ON cd.location = cv.location 
+	AND cd.`date` = cv.`date` 
+WHERE cd.continent != ''
+GROUP BY cd.continent, cd.location, cd.population
+-- AND cd.location LIKE 'Seychelles'
+
+
+-- 2.
 
 -- Percentage of Population Vaccinated by country for each day
 SELECT cd.continent, cd.location, cd.`date`, cd.population, cv.people_vaccinated as people_vaccinated
@@ -84,7 +96,7 @@ JOIN PortfolioProject.CovidVaccinations cv
 	ON cd.location = cv.location 
 	AND cd.`date` = cv.`date` 
 WHERE cd.continent != ''
--- AND cd.location LIKE 'Seychelles'
 
+SELECT * FROM PortfolioProject.CovidDeaths cv WHERE location LIKE 'Burundi'
 
 
