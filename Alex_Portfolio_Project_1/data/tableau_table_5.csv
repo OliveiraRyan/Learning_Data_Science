@@ -1,2 +1,3 @@
-"total_population","total_people_vaccinated","total_people_fully_vaccinated","percentage_population_vaccinated","percentage_population_fully_vaccinated"
-7845174840,3374824365,2459295920,0.4302,0.3135
+"total_population","vaccinations","percentage_population_vaccinated"
+7845174840,3374824365,0.4302
+7845174840,2459295920,0.3135

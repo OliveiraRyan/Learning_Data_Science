@@ -119,19 +119,56 @@ FROM (SELECT cd.location, MAX(cd.population) as population
 ) VaccinationsByLocation
 
 
+
+-- Reshaping the table into 2 rows
+-- Used a messy UNION ALL since I couldn't get CROSS APPLY to work for MySQL 
+SELECT SUM(population) as total_population
+, SUM(people_vaccinated) as vaccinations
+, SUM(people_vaccinated) / SUM(population) as percentage_population_vaccinated
+FROM (SELECT cd.location, MAX(cd.population) as population
+	, MAX(cv.people_vaccinated) as people_vaccinated
+	, MAX(cv.people_fully_vaccinated) as people_fully_vaccinated
+	FROM PortfolioProject.CovidDeaths cd 
+	JOIN PortfolioProject.CovidVaccinations cv
+		ON cd.location = cv.location 
+		AND cd.`date` = cv.`date` 
+	WHERE cd.continent != ''
+	GROUP BY cd.location
+) VaccinationsByLocation
+UNION ALL
+SELECT SUM(population) as total_population
+, SUM(people_fully_vaccinated)
+, SUM(people_fully_vaccinated) / SUM(population)
+FROM (SELECT cd.location, MAX(cd.population) as population
+	, MAX(cv.people_vaccinated) as people_vaccinated
+	, MAX(cv.people_fully_vaccinated) as people_fully_vaccinated
+	FROM PortfolioProject.CovidDeaths cd 
+	JOIN PortfolioProject.CovidVaccinations cv
+		ON cd.location = cv.location 
+		AND cd.`date` = cv.`date` 
+	WHERE cd.continent != ''
+	GROUP BY cd.location
+) VaccinationsByLocation
+
+
+
+
+
+
+
 -- Double checking based on data provided under location 'World'
 -- Numbers are very close, so we'll keep them
 
-SELECT cd.population, cv.people_vaccinated, cv.people_fully_vaccinated
-, cv.people_vaccinated / cd.population as percentage_population_vaccinated
-, cv.people_fully_vaccinated / cd.population as percentage_population_fully_vaccinated
-FROM PortfolioProject.CovidDeaths cd 
-JOIN PortfolioProject.CovidVaccinations cv
-	ON cd.location = cv.location 
-	AND cd.`date` = cv.`date` 
-WHERE cd.location LIKE '%world%'
-ORDER BY cd.`date` DESC
-LIMIT 1
+-- SELECT cd.population, cv.people_vaccinated, cv.people_fully_vaccinated
+-- , cv.people_vaccinated / cd.population as percentage_population_vaccinated
+-- , cv.people_fully_vaccinated / cd.population as percentage_population_fully_vaccinated
+-- FROM PortfolioProject.CovidDeaths cd 
+-- JOIN PortfolioProject.CovidVaccinations cv
+-- 	ON cd.location = cv.location 
+-- 	AND cd.`date` = cv.`date` 
+-- WHERE cd.location LIKE '%world%'
+-- ORDER BY cd.`date` DESC
+-- LIMIT 1
 
 
 -- 6.
